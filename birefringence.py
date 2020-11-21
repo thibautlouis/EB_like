@@ -47,7 +47,7 @@ for id_sv1, sv1 in enumerate(surveys):
 
                 
                 cov = cov_EB[id * n_bins: (id + 1) * n_bins, id * n_bins: (id + 1) * n_bins]
-                # let's only use the diagonal element (the rest is too noisy with the number of sim)
+                # let's only use the diagonal element (the rest is too noisy given the number of sim)
                 cov = np.diag(np.diagonal(cov))
                 
                 inv_cov = np.linalg.inv(cov)
