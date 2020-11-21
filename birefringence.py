@@ -31,10 +31,6 @@ n_bins = len(lb)
 cov_EB = np.load("%s/cov_EB_all_cross.npy" % (mc_dir))
 
 
-cov = {}
-Db_EB = {}
-Db_EE = {}
-Db_BB = {}
 
 id = 0
 for id_sv1, sv1 in enumerate(surveys):
