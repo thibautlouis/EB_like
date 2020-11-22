@@ -43,9 +43,6 @@ bestfit_dir = "best_fits"
 mcm_dir = "mcms"
 
 spectra = ["TT", "TE", "TB", "ET", "BT", "EE", "EB", "BE", "BB"]
-spin_pairs = ["spin0xspin0", "spin0xspin2", "spin2xspin0", "spin2xspin2"]
-clfile = "%s/lcdm.dat" % bestfit_dir
-lth, Dlth = pspy_utils.ps_lensed_theory_to_dict(clfile, output_type=type, lmax=lmax, start_at_zero=False)
 
 
 _, _, lb, _ = pspy_utils.read_binning_file(binning_file, lmax)
@@ -58,7 +55,7 @@ std_mcmc_list = []
 std_fisher_list = []
 
 
-chi2_with_respect_to_theory = True
+chi2_with_respect_to_theory = False
 
 spec_id = 0
 for id_sv1, sv1 in enumerate(surveys):
@@ -73,9 +70,13 @@ for id_sv1, sv1 in enumerate(surveys):
                 spec_name = "%s_%s_%sx%s_%s" % (type, sv1, ar1, sv2, ar2)
                 lb, Db = so_spectra.read_ps(spec_dir + "/%s_cross_00000.dat" % spec_name, spectra=spectra)
               
-                prefix= "%s/%s_%sx%s_%s" % (mcm_dir, sv1, ar1, sv2, ar2)
-                mbb_inv, Bbl = so_mcm.read_coupling(prefix=prefix,spin_pairs=spin_pairs)
-                Db_th = so_mcm.apply_Bbl(Bbl, Dlth, spectra=spectra)
+                if chi2_with_respect_to_theory:
+                    spin_pairs = ["spin0xspin0", "spin0xspin2", "spin2xspin0", "spin2xspin2"]
+                    clfile = "%s/lcdm.dat" % bestfit_dir
+                    lth, Dlth = pspy_utils.ps_lensed_theory_to_dict(clfile, output_type=type, lmax=lmax, start_at_zero=False)
+                    prefix= "%s/%s_%sx%s_%s" % (mcm_dir, sv1, ar1, sv2, ar2)
+                    mbb_inv, Bbl = so_mcm.read_coupling(prefix=prefix,spin_pairs=spin_pairs)
+                    Db_th = so_mcm.apply_Bbl(Bbl, Dlth, spectra=spectra)
 
                 
                 cov = cov_EB[spec_id * n_bins: (spec_id + 1) * n_bins, spec_id * n_bins: (spec_id + 1) * n_bins]
