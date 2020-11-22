@@ -22,7 +22,7 @@ def compute_chi2_theory(Db, Db_th, inv_cov, alpha):
     
 def compute_sigma_alpha(Db, inv_cov):
     vec =  (Db["EE"] - Db["BB"])
-    fisher = 2 * np.dot( vec, np.dot(inv_cov, vec))
+    fisher = 4 * np.dot( vec, np.dot(inv_cov, vec))
     return 1/np.sqrt(fisher) * 180 / np.pi
     
 
@@ -88,7 +88,7 @@ for id_sv1, sv1 in enumerate(surveys):
                 # This bit is doing a mcmc fit for alpha
                 
                 def compute_loglike_data(alpha):
-                    chi2 = compute_chi2_data(Db, inv_cov, alpha, Db_th=Db_th)
+                    chi2 = compute_chi2_data(Db, inv_cov, alpha)
                     return -0.5 * chi2
                     
                 def compute_loglike_theory(alpha):
@@ -122,5 +122,4 @@ for id_sv1, sv1 in enumerate(surveys):
 
 #print(std_fisher_list)
 #print(std_mcmc_list)
-
 #print(np.array(std_fisher_list)/np.array(std_mcmc_list))
