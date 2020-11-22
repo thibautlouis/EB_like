@@ -56,7 +56,7 @@ for id_sv1, sv1 in enumerate(surveys):
                 if  (id_sv1 > id_sv2) : continue
 
                 spec_name = "%s_%s_%sx%s_%s" % (type, sv1, ar1, sv2, ar2)
-                lb, Db = so_spectra.read_ps(spec_dir + "/%s_cross_00009.dat" % spec_name, spectra=spectra)
+                lb, Db = so_spectra.read_ps(spec_dir + "/%s_cross_00000.dat" % spec_name, spectra=spectra)
                 
                 
                 cov = cov_EB[spec_id * n_bins: (spec_id + 1) * n_bins, spec_id * n_bins: (spec_id + 1) * n_bins]
