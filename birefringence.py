@@ -84,12 +84,12 @@ for id_sv1, sv1 in enumerate(surveys):
                 #alpha, chi2, _ = sample.samples[:,0], sample.samples[:,1], sample.samples[:,2]
                 #alpha *= 180 / np.pi
             
-               # std_mcmc = np.std(alpha)
-               # std_fisher = compute_sigma_alpha(Db, inv_cov)
+                #std_mcmc = np.std(alpha)
+                #std_fisher = compute_sigma_alpha(Db, inv_cov)
                 
                 
-               # std_mcmc_list += [std_mcmc]
-              #  std_fisher_list += [std_fisher]
+                #std_mcmc_list += [std_mcmc]
+                #std_fisher_list += [std_fisher]
 
                 
 
