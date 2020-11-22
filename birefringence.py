@@ -9,7 +9,7 @@ from getdist.mcsamples import MCSamplesFromCobaya
 
 def compute_chi2(Db, inv_cov, alpha):
     EB = (Db["EB"] + Db["BE"])/2
-    residual = EB - 1/2 * (Db["EE"] - Db["BB"]) * np.tan(4 * alpha)
+    residual = EB - 1/2 * (Db["EE"] - Db["BB"]) * np.tan(4 * alpha * np.pi / 180)
     chi2 = np.dot(residual, np.dot(inv_cov, residual))
     return chi2
 
@@ -72,7 +72,7 @@ for id_sv1, sv1 in enumerate(surveys):
                     return -0.5 * chi2
                 
                 info = {"likelihood": {"chi2": compute_loglike},
-                        "params": dict([("alpha",{"prior": {"min": -np.deg2rad(5), "max": np.deg2rad(5)},"latex": r"\alpha",},)]),
+                        "params": dict([("alpha",{"prior": {"min": -5, "max": 5},"latex": r"\alpha",},)]),
                         "sampler": {"mcmc": {"max_tries": 10 ** 8, "Rminus1_stop": 0.01, "Rminus1_cl_stop": 0.08}},}
 
                 updated_info, sampler = run(info)
@@ -82,7 +82,6 @@ for id_sv1, sv1 in enumerate(surveys):
 
 
                 #alpha, chi2, _ = sample.samples[:,0], sample.samples[:,1], sample.samples[:,2]
-                #alpha *= 180 / np.pi
             
                 #std_mcmc = np.std(alpha)
                 #std_fisher = compute_sigma_alpha(Db, inv_cov)
