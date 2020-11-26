@@ -1,14 +1,16 @@
-import matplotlib
-import numpy as np
-import pandas as pd
-
-matplotlib.use("Agg")
 import os
 import pickle
 import sys
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from pspy import so_dict
+import numpy as np
+import pandas as pd
+from pspy import pspy_utils, so_dict
+
+import planck_utils
 
 d = so_dict.so_dict()
 d.read_from_file(sys.argv[1])
@@ -54,3 +56,54 @@ df = pd.DataFrame(
     index=results.keys(),
 )
 print(df)
+
+# Show best fit
+binning_file = d["binning_file"]
+lmax = d["lmax"]
+clfile = d["theoryfile"]
+
+lth, Clth = pspy_utils.ps_lensed_theory_to_dict(
+    clfile, output_type="Cl", lmax=lmax, start_at_zero=False
+)
+
+lb, Cb_EE_th = planck_utils.binning(lth, Clth["EE"], lmax, binning_file)
+lb, Cb_BB_th = planck_utils.binning(lth, Clth["BB"], lmax, binning_file)
+lmin, lmax = 100, 1500
+idl = np.where((lb >= lmin) & (lb <= lmax))
+Cb_EE_th, Cb_BB_th = Cb_EE_th[idl], Cb_BB_th[idl]
+
+if d["use_ffp10"]:
+    mc_dir = "montecarlo_ffp10_larger_bin"
+else:
+    mc_dir = "montecarlo"
+from itertools import combinations_with_replacement as cwr
+
+fig, axes = plt.subplots(len(results) // 2, 2, sharex=True, sharey=False, figsize=(12, 8))
+
+for i, (f0, f1) in enumerate(cwr(d["freqs"], 2)):
+    lb, Cb_EB, std_EB = np.loadtxt("%s/EB_legacy_%sx%s.dat" % (mc_dir, f0, f1), unpack=True)
+
+    def Cb_EB_fit(alpha):
+        return 1 / 2 * (Cb_EE_th - Cb_BB_th) * np.sin(4 * np.deg2rad(alpha))
+
+    def chi2(alpha):
+        return np.sum((Cb_EB - Cb_EB_fit(alpha)) ** 2 / std_EB ** 2)
+
+    def label(alpha):
+        return r"$\chi^2$/dof($\alpha=${:.2f}°) = {:.2f}/{} - PTE = {:.2f}".format(
+            alpha, chi2(alpha), len(lb), stats.chi2.sf(chi2(alpha), len(lb))
+        )
+
+    from scipy import stats
+
+    axes.flat[i].errorbar(lb, Cb_EB, std_EB, fmt=".", zorder=0, label=label(alpha=0.0))
+    axes.flat[i].plot(
+        lb, Cb_EB_fit(mean_mcmc[i]), "tab:red", zorder=1, label=label(alpha=mean_mcmc[i])
+    )
+    axes.flat[i].set_title("Planck - {}x{} GHz".format(f0, f1))
+    axes.flat[i].legend(fontsize=8)
+
+for ax in axes[-1]:
+    ax.set_xlabel("$\ell$")
+plt.subplots_adjust()
+plt.savefig(os.path.join(chain_dir, "spectra.png"))
