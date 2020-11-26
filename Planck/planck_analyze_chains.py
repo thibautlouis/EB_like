@@ -90,11 +90,11 @@ for i, (f0, f1) in enumerate(cwr(d["freqs"], 2)):
         return np.sum((Cb_EB - Cb_EB_fit(alpha)) ** 2 / std_EB ** 2)
 
     def label(alpha):
+        from scipy import stats
+
         return r"$\chi^2$/dof($\alpha=${:.2f}°) = {:.2f}/{} - PTE = {:.2f}".format(
             alpha, chi2(alpha), len(lb), stats.chi2.sf(chi2(alpha), len(lb))
         )
-
-    from scipy import stats
 
     axes.flat[i].errorbar(lb, Cb_EB, std_EB, fmt=".", zorder=0, label=label(alpha=0.0))
     axes.flat[i].plot(
