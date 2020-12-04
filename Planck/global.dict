@@ -1,4 +1,4 @@
-freqs = [100, 143, 217]
+freqs = ["100", "143", "217"]
 splits = ["hm1", "hm2"]
 
 data_dir = 'planck_data/'

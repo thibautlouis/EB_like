@@ -65,7 +65,7 @@ for id_f, (f0, f1) in enumerate(freq_pairs):
 
 
 def compute_loglike(alpha100, alpha143, alpha217, beta):
-    alpha = {100: alpha100, 143: alpha143, 217: alpha217}
+    alpha = {"100": alpha100, "143": alpha143, "217": alpha217}
     vec_res = []
     for id_f, (f0, f1) in enumerate(freq_pairs):
         A = birefringence_tools.get_my_A_vector(alpha[f0], alpha[f1])
